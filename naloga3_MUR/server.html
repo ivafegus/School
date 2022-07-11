@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TCP vticnice</title>
+    <style>
+      body { background: #f2bef7; margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+      #form { background: rgba(138, 47, 148); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+      #input:focus { outline: none; }
+      #form > button { background: #3b0b40; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages > li { padding: 0.5rem 1rem; }
+      #messages > li:nth-child(odd) { background: #efefef; }
+    </style>
+  </head>
+<body>
+    <form>
+      <input type="text" id="m" />
+      <input type="submit" id="submitButton" value="submit" />
+    </form>
+    <ul id="messages"></ul>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script
+    src="https://code.jquery.com/jquery-3.5.1.js"
+    integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+  <script>
+    let userName = prompt("whats your name");
+    let ID = "";
+    var socket = io();
+    socket.emit("join room", {username : userName});
+
+    socket.on('send data',(data)=>{
+        ID = data.id; 
+
+    })
+	
+    $("#m").focus();
+    document
+      .getElementsByTagName("form")[0]
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+        socket.emit("chat message", {
+          value: document.getElementById("m").value,
+          user: userName,
+        });
+
+        document.getElementById("m").value = "";
+      });
+    socket.on("chat message", (data) => {
+      console.log(data.data.user + ": " + data.value);
+        displayMessage(data);
+    });
+
+    function displayMessage(data) {
+        let authorClass = "";
+      let divClass = ""
+      if (data.id === ID) {
+          console.log("This person has sent a message")
+        authorClass = "me";
+        divClass = "myDiv";
+      } else {
+        authorClass = "you";
+        divClass = "yourDiv";
+      }
+      const div = document.createElement("div");
+      div.className = divClass;
+      const li = document.createElement("li");
+      const p = document.createElement("p");
+      div.innerHTML =
+        '<p class="' +
+        authorClass +
+        '">' +
+        data.data.user +
+		": " +
+        "</p>" +
+        '<p class="message"> ' +
+        data.data.value +
+        "</p>";
+      div.appendChild(p);
+      li.appendChild(div);
+
+      document.getElementById("messages").appendChild(li);
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  </script>
+</html>
+</html>
