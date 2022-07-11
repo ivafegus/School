@@ -1,0 +1,23 @@
+{
+  "name": "vaja5",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll",
+    "dev": "nodemon ./app",
+    "dev1": " set HTTP_PORT=3002 && set P2P_PORT=5002 && set PEERS=ws://localhost:5001 && npm run dev",
+    "dev2": " set HTTP_PORT=3003 && set P2P_PORT=5003 && set PEERS=ws://localhost:5002,ws://localhost:5001 && npm run dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^27.4.7",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "crypto-js": "^4.1.1",
+    "express": "^4.17.2"
+  }
+}
